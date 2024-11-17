@@ -18,9 +18,7 @@ const Home = async () => {
 
           await signOut({ redirectTo: ROUTES.SIGN_IN });
         }}
-      >
-        <Button type="submit">Log out</Button>
-      </form>
+      ></form>
     </>
   );
 };
