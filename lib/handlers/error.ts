@@ -50,3 +50,5 @@ const handleError = (error: unknown, responseType: ResponseType = "server") => {
 };
 
 export default handleError;
+
+
