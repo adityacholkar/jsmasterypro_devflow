@@ -10,7 +10,9 @@ import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { AskQuestionSchema } from "../validations";
 
-export async function createQuestion(params: CreateQuestionParams): Promise<ActionResponse> {
+export async function createQuestion(
+  params: CreateQuestionParams
+): Promise<ActionResponse<Question>> {
   const validationResult = await action({
     params,
     schema: AskQuestionSchema,
@@ -63,7 +65,8 @@ export async function createQuestion(params: CreateQuestionParams): Promise<Acti
 
     return { success: true, data: JSON.parse(JSON.stringify(question)) };
   } catch (error) {
-    await session.abortTransaction();
+    console.log(error);
+    // await session.abortTransaction();
     return handleError(error) as ErrorResponse;
   } finally {
     session.endSession();
