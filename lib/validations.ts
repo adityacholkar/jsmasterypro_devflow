@@ -70,12 +70,17 @@ export const AskQuestionSchema = z.object({
 
 export const UserSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
-  username: z.string().min(3, { message: "Username must be at least 3 characters long." }),
+  username: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters long." }),
   email: z.string().email({ message: "Please provide a valid email address." }),
   bio: z.string().optional(),
   image: z.string().url({ message: "Please provide a valid URL." }).optional(),
   location: z.string().optional(),
-  portfolio: z.string().url({ message: "Please provide a valid URL." }).optional(),
+  portfolio: z
+    .string()
+    .url({ message: "Please provide a valid URL." })
+    .optional(),
   reputation: z.number().optional(),
 });
 
@@ -99,16 +104,24 @@ export const AccountSchema = z.object({
     })
     .optional(),
   provider: z.string().min(1, { message: "Provider is required." }),
-  providerAccountId: z.string().min(1, { message: "Provider Account ID is required." }),
+  providerAccountId: z
+    .string()
+    .min(1, { message: "Provider Account ID is required." }),
 });
 
 export const SignInWithOAuthSchema = z.object({
   provider: z.enum(["google", "github"]),
-  providerAccountId: z.string().min(1, { message: "Provider Account ID is required." }),
+  providerAccountId: z
+    .string()
+    .min(1, { message: "Provider Account ID is required." }),
   user: z.object({
     name: z.string().min(1, { message: "Name is required." }),
-    username: z.string().min(3, { message: "Username must be at least 3 characters long." }),
-    email: z.string().email({ message: "Please provide a valid email address." }),
+    username: z
+      .string()
+      .min(3, { message: "Username must be at least 3 characters long." }),
+    email: z
+      .string()
+      .email({ message: "Please provide a valid email address." }),
     image: z.string().url("Invalid image URL").optional(),
   }),
 });
@@ -127,4 +140,8 @@ export const PaginatedSearchParamsSchema = z.object({
   query: z.string().optional(),
   filter: z.string().optional(),
   sort: z.string().optional(),
+});
+
+export const GetTagQuestionsSchema = PaginatedSearchParamsSchema.extend({
+  tagId: z.string().min(1, { message: "Tag ID is required." }),
 });
