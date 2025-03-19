@@ -1,6 +1,7 @@
 "use server";
 
 import mongoose, { Error, FilterQuery } from "mongoose";
+import { Session } from "next-auth"; // Add this import
 
 import Question, { IQuestionDoc } from "@/database/question.model";
 import TagQuestion from "@/database/tag-question.model";
@@ -15,8 +16,6 @@ import {
   IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from "../validations";
-import { revalidatePath } from "next/cache";
-import ROUTES from "@/constants/routes";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -31,8 +30,13 @@ export async function createQuestion(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { title, content, tags } = validationResult.params!;
-  const userId = validationResult?.session?.user?.id;
+  // Add type assertion to help TypeScript understand the type narrowing
+  const result = validationResult as {
+    params: { title: string; content: string; tags: string[] };
+    session: Session | null;
+  };
+  const { title, content, tags } = result.params;
+  const userId = result.session?.user?.id;
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -93,8 +97,13 @@ export async function editQuestion(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { title, content, tags, questionId } = validationResult.params!;
-  const userId = validationResult?.session?.user?.id;
+  // Add type assertion to help TypeScript understand the type narrowing
+  const result = validationResult as {
+    params: { title: string; content: string; tags: string[]; questionId: string };
+    session: Session | null;
+  };
+  const { title, content, tags, questionId } = result.params;
+  const userId = result.session?.user?.id;
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -192,11 +201,8 @@ export async function getQuestion(params: GetQuestionParams): Promise<ActionResp
     return handleError(validationResult) as ErrorResponse;
   }
 
-  if (validationResult instanceof Error) {
-    return handleError(validationResult) as ErrorResponse;
-  }
-
-  const { questionId } = validationResult.params!;
+  // Use the original params instead of trying to extract from validationResult
+  const { questionId } = params;
 
   try {
     const question = await Question.findById(questionId)
@@ -294,7 +300,12 @@ export async function incrementViews(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { questionId } = validationResult.params!;
+  // Add type assertion to help TypeScript understand the type narrowing
+  const result = validationResult as {
+    params: { questionId: string };
+    session: Session | null;
+  };
+  const { questionId } = result.params;
 
   try {
     const question = await Question.findById(questionId);
@@ -306,8 +317,6 @@ export async function incrementViews(
     question.views += 1;
 
     await question.save();
-
-    revalidatePath(ROUTES.QUESTION(questionId));
 
     return {
       success: true,

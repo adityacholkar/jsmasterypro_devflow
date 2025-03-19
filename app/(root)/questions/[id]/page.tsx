@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+// import { after } from "next/server";
 import React from "react";
 
 import AllAnswers from "@/components/answers/AllAnswers";
@@ -12,12 +13,15 @@ import ROUTES from "@/constants/routes";
 import { getAnswers } from "@/lib/actions/answer.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
+import { ViewCounter } from "@/app/(root)/questions/[id]/viewCounter";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
   const { success, data: question } = await getQuestion({ questionId: id });
 
-  await incrementViews({ questionId: id });
+  // after(async () => {
+  //   await incrementViews({ questionId: id });
+  // });
 
   if (!success || !question) return redirect("/404");
 
@@ -36,6 +40,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 
   return (
     <>
+    <ViewCounter questionId={id} />
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between">
           <div className="flex items-center justify-start gap-1">
@@ -100,7 +105,11 @@ const QuestionDetails = async ({ params }: RouteParams) => {
       </section>
 
       <section className="my-5">
-        <AnswerForm questionId={question._id} />
+        <AnswerForm
+          questionId={question._id}
+          questionTitle={question.title}
+          questionContent={question.content}
+        />
       </section>
     </>
   );
