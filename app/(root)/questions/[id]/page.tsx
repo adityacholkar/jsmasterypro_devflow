@@ -14,6 +14,7 @@ import { getAnswers } from "@/lib/actions/answer.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import { ViewCounter } from "@/app/(root)/questions/[id]/viewCounter";
+import Votes from "@/components/votes/Votes";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
@@ -40,7 +41,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 
   return (
     <>
-    <ViewCounter questionId={id} />
+      <ViewCounter questionId={id} />
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between">
           <div className="flex items-center justify-start gap-1">
@@ -57,6 +58,12 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 
           <div className="flex justify-end">
             <p>Votes</p>
+            <Votes
+              upvotes={question.upvotes}
+              hasupVoted={true}
+              downvotes={question.downvotes}
+              hasdownVoted={false}
+            />
           </div>
         </div>
 
