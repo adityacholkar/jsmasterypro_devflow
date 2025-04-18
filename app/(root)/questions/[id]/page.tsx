@@ -8,16 +8,15 @@ import TagCard from "@/components/cards/TagCard";
 import { Preview } from "@/components/editor/Preview";
 import AnswerForm from "@/components/forms/AnswerForm";
 import Metric from "@/components/Metric";
+import SaveQuestion from "@/components/questions/SaveQuestion";
 import UserAvatar from "@/components/UserAvatar";
 import Votes from "@/components/votes/Votes";
 import ROUTES from "@/constants/routes";
 import { getAnswers } from "@/lib/actions/answer.action";
+import { hasSavedQuestion } from "@/lib/actions/collection.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { hasVoted } from "@/lib/actions/vote.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
-import { ViewCounter } from "./viewCounter";
-import SaveQuestion from "@/components/questions/SaveQuestion";
-import { hasSavedQuestion } from "@/lib/actions/collection.action";
 
 const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
@@ -54,13 +53,13 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
 
   return (
     <>
-      <ViewCounter questionId={id} />
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between">
           <div className="flex items-center justify-start gap-1">
             <UserAvatar
               id={author._id}
               name={author.name}
+              imageUrl={author.image}
               className="size-[22px]"
               fallbackClassName="text-[10px]"
             />
@@ -79,6 +78,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
                 hasVotedPromise={hasVotedPromise}
               />
             </Suspense>
+
             <Suspense fallback={<div>Loading...</div>}>
               <SaveQuestion
                 questionId={question._id}
