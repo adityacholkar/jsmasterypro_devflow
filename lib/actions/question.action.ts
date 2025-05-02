@@ -2,6 +2,7 @@
 
 import mongoose, { FilterQuery, Types } from "mongoose";
 import { Session } from "next-auth"; // Add this import
+import { cache } from "react";
 
 import Question, { IQuestionDoc } from "@/database/question.model";
 import TagQuestion from "@/database/tag-question.model";
@@ -204,7 +205,9 @@ export async function editQuestion(
   }
 }
 
-export async function getQuestion(params: GetQuestionParams): Promise<ActionResponse<Question>> {
+export const getQuestion = cache(async function getQuestion(
+  params: GetQuestionParams
+): Promise<ActionResponse<Question>> {
   const validationResult = await action({
     params,
     schema: GetQuestionSchema,
@@ -231,7 +234,7 @@ export async function getQuestion(params: GetQuestionParams): Promise<ActionResp
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
-}
+});
 
 export async function getRecommendedQuestions({
   userId,
